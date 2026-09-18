@@ -190,7 +190,10 @@ sendBtn=document.getElementById("sendBtn");
 
 let activeUid=null,
 currentUserData={accessLevel:1,tag:"MEMBER",nickname:"Anon",muted:false,banned:false},
-banTimerInterval=null;
+banTimerInterval=null,
+msgAddedUnsub=null,
+msgChangedUnsub=null,
+msgRemovedUnsub=null;
 
 /* ================= AUTH SYSTEM ================= */
 onAuthStateChanged(auth, async user => {
@@ -198,25 +201,35 @@ onAuthStateChanged(auth, async user => {
     activeUid = user.uid;
     authOverlay.style.display = "none";
     
-    const userRef = ref(db, `users/${user.uid}`);
-    const snap = await get(userRef);
+    const userRef = ref(db, `app_users/${user.uid}`);
     
-    if (!snap.exists()) {
-      const defaultNick = user.displayName || ("User_" + user.uid.substring(0, 5));
-      await set(userRef, {
-        username: defaultNick,
-        nickname: defaultNick,
-        tag: "MEMBER",
-        accessLevel: 1,
-        muted: false,
-        banned: false
-      });
+    try {
+      const snap = await get(userRef);
+      if (!snap.exists()) {
+        const defaultNick = user.displayName || (user.email ? user.email.split('@')[0] : "User_" + user.uid.substring(0, 5));
+        await set(userRef, {
+          username: defaultNick,
+          nickname: defaultNick,
+          email: user.email || "",
+          photoURL: user.photoURL || "",
+          tag: "MEMBER",
+          accessLevel: 1,
+          muted: false,
+          banned: false
+        });
+      }
+    } catch (err) {
+      console.error("User profile initialization error:", err);
     }
+
     listenToUserStatus(user.uid);
+    initMessagesStream();
   } else {
     activeUid = null;
     authOverlay.style.display = "flex";
     currentUserDisplay.textContent = "Not Authorized";
+    messagesContainer.innerHTML = "";
+    cleanupStream();
   }
 });
 
@@ -232,12 +245,43 @@ logoutBtn.addEventListener("click", () => signOut(auth));
 bannedLogoutBtn.addEventListener("click", () => signOut(auth));
 
 function listenToUserStatus(uid) {
-  onValue(ref(db, `users/${uid}`), snapshot => {
+  onValue(ref(db, `app_users/${uid}`), snapshot => {
     if (!snapshot.exists()) return;
     currentUserData = snapshot.val();
     currentUserData.accessLevel = parseInt(currentUserData.accessLevel || 1);
     currentUserDisplay.textContent = `${currentUserData.nickname} [Lvl:${currentUserData.accessLevel}]`;
     checkBanStatus();
+  });
+}
+
+function cleanupStream() {
+  if (msgAddedUnsub) msgAddedUnsub();
+  if (msgChangedUnsub) msgChangedUnsub();
+  if (msgRemovedUnsub) msgRemovedUnsub();
+  msgAddedUnsub = null;
+  msgChangedUnsub = null;
+  msgRemovedUnsub = null;
+}
+
+function initMessagesStream() {
+  messagesContainer.innerHTML = "";
+  cleanupStream();
+
+  msgAddedUnsub = onChildAdded(messagesRef, snapshot => {
+    renderMessage(snapshot.key, snapshot.val());
+  });
+
+  msgChangedUnsub = onChildChanged(messagesRef, data => {
+    const existingMsg = document.getElementById(`msg-${data.key}`);
+    if (existingMsg) {
+      const body = existingMsg.querySelector(".msg-body");
+      if (body) body.innerHTML = renderSpoilerText(data.val().message || "");
+    }
+  });
+
+  msgRemovedUnsub = onChildRemoved(messagesRef, data => {
+    const existingMsg = document.getElementById(`msg-${data.key}`);
+    if (existingMsg) existingMsg.remove();
   });
 }
 
@@ -251,7 +295,7 @@ function checkBanStatus(){
 if(banTimerInterval)clearInterval(banTimerInterval);
 if(currentUserData.banned){
 if(currentUserData.banExpires!==-1&&Date.now()>currentUserData.banExpires){
-update(ref(db,`users/${activeUid}`),{banned:false});bannedOverlay.style.display="none";return;
+update(ref(db,`app_users/${activeUid}`),{banned:false});bannedOverlay.style.display="none";return;
 }
 banReasonText.textContent=`Reason: ${currentUserData.banReason||"SysAdmin Override"}`;
 bannedOverlay.style.display="flex";
@@ -270,7 +314,7 @@ else banTimeLeft.textContent="T-Minus: "+formatTimeLeft(remaining);
 function isMuted(){
 if(!currentUserData.muted)return false;
 if(currentUserData.muteExpires!==-1&&Date.now()>currentUserData.muteExpires){
-update(ref(db,`users/${activeUid}`),{muted:false});currentUserData.muted=false;return false;
+update(ref(db,`app_users/${activeUid}`),{muted:false});currentUserData.muted=false;return false;
 }
 return true;
 }
@@ -278,7 +322,7 @@ return true;
 changeNickBtn.addEventListener("click",async()=>{
 if(!auth.currentUser) return alert("ERR: Authorization required.");
 const newNick=prompt("Enter new Alias:",currentUserData.nickname);
-if(newNick&&newNick.trim()!=="")await update(ref(db,`users/${activeUid}`),{nickname:newNick.trim()});
+if(newNick&&newNick.trim()!=="")await update(ref(db,`app_users/${activeUid}`),{nickname:newNick.trim()});
 });
 
 setTimeout(()=>{const warning=document.getElementById("warning");if(warning)warning.remove()},3500);
@@ -378,21 +422,6 @@ msgInput.value="";
 sendBtn.addEventListener("click",sendMessage);
 msgInput.addEventListener("keypress",e=>{if(e.key==="Enter")sendMessage()});
 
-onChildAdded(messagesRef,data=>renderMessage(data.key,data.val()));
-
-onChildChanged(messagesRef,data=>{
-const existingMsg=document.getElementById(`msg-${data.key}`);
-if(existingMsg){
-const body=existingMsg.querySelector(".msg-body");
-if(body)body.innerHTML=renderSpoilerText(data.val().message||"");
-}
-});
-
-onChildRemoved(messagesRef,data=>{
-const existingMsg=document.getElementById(`msg-${data.key}`);
-if(existingMsg)existingMsg.remove();
-});
-
 /* ================= RENDER ================= */
 function renderMessage(msgId,msgData){
 if(document.getElementById(`msg-${msgId}`))return;
@@ -468,7 +497,7 @@ if(isNaN(hours)||hours<0)return alert("ERR: Invalid duration.");
 const reason=prompt(`Reason for ${actionType}:`,"TOS Violation");
 if(reason===null)return;
 
-const targetRef=ref(db,`users/${targetUid}`);
+const targetRef=ref(db,`app_users/${targetUid}`);
 const expiresAt=hours===0?-1:Date.now()+hours*3600*1000;
 
 if(actionType==="MUTE")await update(targetRef,{muted:true,muteReason:reason,muteExpires:expiresAt});
