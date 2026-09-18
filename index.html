@@ -32,8 +32,8 @@ html,body{width:100%;min-height:100%;background:#050505;color:#d4d4d4;font-size:
 .btn-mod:hover{background:#2a2a2a;color:#ccc}.btn-danger:hover{background:#991b1b;color:#fff;border-color:#991b1b}
 
 .input-area{display:flex;padding:7px;background:#0a0a0a;gap:5px;border-top:1px solid #1f1f1f;align-items:center}
-input[type=text],input[type=password]{padding:7px 8px;border:1px solid #1f1f1f;border-radius:2px;background:#050505;color:#d4d4d4;outline:none;font-size:.73rem;transition:border-color .2s}
-input[type=text]:focus,input[type=password]:focus{border-color:#ef4444}
+input[type=text]{padding:7px 8px;border:1px solid #1f1f1f;border-radius:2px;background:#050505;color:#d4d4d4;outline:none;font-size:.73rem;transition:border-color .2s}
+input[type=text]:focus{border-color:#ef4444}
 #msgInput{min-width:0;flex:1}
 .img-upload-btn{background:#161616;color:#999;padding:7px 8px;border-radius:2px;cursor:pointer;border:1px solid #2a2a2a;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:bold}
 .img-upload-btn:hover{background:#2a2a2a;color:#ccc}
@@ -43,43 +43,27 @@ button:hover{background:#7f1d1d}.btn-small{padding:4px 6px;font-size:.55rem}
 
 .auth-overlay,.banned-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);display:flex;justify-content:center;align-items:center;z-index:2000}
 .banned-overlay{z-index:3000}
-.auth-box,.banned-box{background:#0a0a0a;padding:20px;border-radius:2px;border:1px solid #1f1f1f;width:90%;max-width:350px;text-align:center}
+.auth-box,.banned-box{background:#0a0a0a;padding:25px;border-radius:2px;border:1px solid #1f1f1f;width:90%;max-width:350px;text-align:center}
 .banned-box{border-color:#991b1b}.banned-box h2{color:#dc2626;margin-bottom:10px;font-size:1.1rem;letter-spacing:1px}.banned-box p{color:#888;font-size:.8rem;margin-bottom:5px}
 .time-left-text{color:#ef4444;font-weight:bold;font-size:.9rem;margin-bottom:15px}
-.auth-box h2{margin-bottom:15px;color:#dc2626;letter-spacing:1px;font-size:1.1rem}
-.auth-box input,.auth-box button{width:100%;margin-bottom:10px}
-.auth-toggle{font-size:.75rem;color:#666;cursor:pointer;text-decoration:underline}.auth-toggle:hover{color:#aaa}
+.auth-box h2{margin-bottom:20px;color:#dc2626;letter-spacing:1px;font-size:1.1rem}
+
+.btn-google{background:#ea4335;color:#fff;width:100%;padding:10px;font-size:.8rem;letter-spacing:.5px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-google:hover{background:#d93025}
 
 .warning-popup{position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#991b1b;color:#fff;padding:8px 16px;border-radius:2px;font-weight:bold;box-shadow:0 2px 10px rgba(153,27,27,.4);z-index:1000;font-size:.8rem;animation:fadeOut .5s ease var(--warning-time) forwards}
 @keyframes fadeOut{to{opacity:0;visibility:hidden}}
 
 .messages::-webkit-scrollbar{width:5px}.messages::-webkit-scrollbar-track{background:#050505}.messages::-webkit-scrollbar-thumb{background:#222}.messages::-webkit-scrollbar-thumb:hover{background:#333}
 
-/* ===== SPOILERS ===== */
-.spoiler{
-position:relative;display:inline-block;background:#111;color:#111;border-radius:3px;
-cursor:pointer;padding:1px 5px;margin:1px 0;overflow:hidden;vertical-align:middle;
-}
-.spoiler::after{
-content:"SPOILER • CLICK TO REVEAL";position:absolute;inset:0;display:flex;align-items:center;
-justify-content:center;background:rgba(10,10,10,.92);color:#888;font-size:.58rem;
-font-weight:bold;letter-spacing:.4px;white-space:nowrap;
-}
+/* SPOILERS */
+.spoiler{position:relative;display:inline-block;background:#111;color:#111;border-radius:3px;cursor:pointer;padding:1px 5px;margin:1px 0;overflow:hidden;vertical-align:middle}
+.spoiler::after{content:"SPOILER • CLICK TO REVEAL";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,10,10,.92);color:#888;font-size:.58rem;font-weight:bold;letter-spacing:.4px;white-space:nowrap}
 .spoiler.revealed{background:transparent;color:inherit}
 .spoiler.revealed::after{content:"CLICK TO RE-BLUR";background:rgba(0,0,0,.65);color:#ddd}
-.spoiler-image-wrap{
-position:relative;display:block;max-width:100%;margin-top:6px;border:1px solid #222;
-border-radius:2px;overflow:hidden;background:#050505;cursor:pointer
-}
-.spoiler-image-wrap img{
-width:100%;max-height:var(--image-height);display:block;object-fit:contain;
-filter:blur(32px);transform:scale(1.08);transition:filter .2s,transform .2s
-}
-.spoiler-image-wrap::after{
-content:"SPOILER IMAGE • CLICK TO REVEAL";position:absolute;inset:0;display:flex;
-align-items:center;justify-content:center;background:rgba(0,0,0,.58);color:#ddd;
-font-size:.65rem;font-weight:bold;letter-spacing:.5px;text-align:center
-}
+.spoiler-image-wrap{position:relative;display:block;max-width:100%;margin-top:6px;border:1px solid #222;border-radius:2px;overflow:hidden;background:#050505;cursor:pointer}
+.spoiler-image-wrap img{width:100%;max-height:var(--image-height);display:block;object-fit:contain;filter:blur(32px);transform:scale(1.08);transition:filter .2s,transform .2s}
+.spoiler-image-wrap::after{content:"SPOILER IMAGE • CLICK TO REVEAL";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.58);color:#ddd;font-size:.65rem;font-weight:bold;letter-spacing:.5px;text-align:center}
 .spoiler-image-wrap.revealed img{filter:none;transform:none}
 .spoiler-image-wrap.revealed::after{content:"CLICK TO RE-BLUR";background:rgba(0,0,0,.55);font-size:.65rem}
 
@@ -89,9 +73,6 @@ html,body{width:100%;height:auto;min-height:100%;overflow-x:hidden;overflow-y:au
 .sdr-panel{width:100%;height:var(--mobile-sdr-height);min-height:0;border-right:0;border-bottom:1px solid #1f1f1f;flex-shrink:0}
 .sdr-frame{width:100%;height:100%}
 .chat-panel{width:100%;height:var(--mobile-chat-height);min-width:0;min-height:320px;flex-shrink:0}
-}
-@media(max-width:500px){
-.chat-panel{min-height:360px}.header-title{font-size:.72rem}.msg{font-size:calc(var(--chat-font) - .02rem)}
 }
 </style>
 </head>
@@ -109,7 +90,7 @@ html,body{width:100%;height:auto;min-height:100%;overflow-x:hidden;overflow-y:au
 <div class="chat-header">
 <div class="header-title">[ ANARCHY_NET // RELAY_01 // <span id="versionText"></span> ]</div>
 <div class="header-user-row">
-<span id="currentUser"></span>
+<span id="currentUser">Not Authorized</span>
 <button id="changeNickBtn" class="btn-small" style="background:#1f2937">Alias</button>
 <button id="logoutBtn" class="btn-small">Exit</button>
 </div>
@@ -141,14 +122,8 @@ html,body{width:100%;height:auto;min-height:100%;overflow-x:hidden;overflow-y:au
 
 <div class="auth-overlay" id="authOverlay">
 <div class="auth-box">
-<h2 id="authTitle">A U T H E N T I C A T E</h2>
-<input type="text" id="authUsername" placeholder="Root ID (Username)" autocomplete="off">
-<input type="text" id="authNickname" placeholder="Display Alias" autocomplete="off" style="display:none">
-<input type="password" id="authPin" placeholder="4-Digit PIN Key" maxlength="8" autocomplete="off">
-<input type="text" id="authRecoveryCode" placeholder="Override Code" style="display:none" autocomplete="off">
-<button id="authPrimaryBtn">Initialize</button>
-<p class="auth-toggle" id="authResetToggle" style="margin-bottom:8px">Lost PIN? Initiate Override</p>
-<p class="auth-toggle" id="authModeToggle">New Identity? Register</p>
+<h2>A U T H E N T I C A T E</h2>
+<button id="authPrimaryBtn" class="btn-google">LOGIN WITH GOOGLE</button>
 </div>
 </div>
 
@@ -156,7 +131,7 @@ html,body{width:100%;height:auto;min-height:100%;overflow-x:hidden;overflow-y:au
 
 /* ================= CONFIG ================= */
 const CONFIG={
-VERSION:"1.0.7A",
+VERSION:"1.0.8G",
 SDR_WIDTH:"85%",
 CHAT_WIDTH:"15%",
 CHAT_FONT_SIZE:"0.80rem",
@@ -164,8 +139,7 @@ IMAGE_HEIGHT:"220px",
 WARNING_TIME:"3s",
 MOBILE_SDR_HEIGHT:"70dvh",
 MOBILE_CHAT_HEIGHT:"30dvh",
-MAX_IMAGE_SIZE:2*1024*1024,
-SPOILER_IMAGE_BLUR:"32px"
+MAX_IMAGE_SIZE:2*1024*1024
 };
 
 document.documentElement.style.setProperty("--sdr-width",CONFIG.SDR_WIDTH);
@@ -177,8 +151,9 @@ document.documentElement.style.setProperty("--mobile-sdr-height",CONFIG.MOBILE_S
 document.documentElement.style.setProperty("--mobile-chat-height",CONFIG.MOBILE_CHAT_HEIGHT);
 document.getElementById("versionText").textContent="v"+CONFIG.VERSION;
 
-/* ================= FIREBASE ================= */
+/* ================= FIREBASE & AUTH ================= */
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 import{getDatabase,ref,push,onChildAdded,onChildChanged,onChildRemoved,get,set,update,remove,onValue}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
 const firebaseConfig={
@@ -192,30 +167,79 @@ appId:"1:888428258274:web:bc3a453ba34208992f4fbb",
 measurementId:"G-GTY7Y12J65"
 };
 
-const app=initializeApp(firebaseConfig),db=getDatabase(app),messagesRef=ref(db,"global_messages");
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getDatabase(app);
+const provider=new GoogleAuthProvider();
+const messagesRef=ref(db,"global_messages");
 
 /* ================= ELEMENTS ================= */
-const authOverlay=document.getElementById("authOverlay"),bannedOverlay=document.getElementById("bannedOverlay"),
-banReasonText=document.getElementById("banReasonText"),banTimeLeft=document.getElementById("banTimeLeft"),
-bannedLogoutBtn=document.getElementById("bannedLogoutBtn"),authTitle=document.getElementById("authTitle"),
-authUsername=document.getElementById("authUsername"),authNickname=document.getElementById("authNickname"),
-authPin=document.getElementById("authPin"),authRecoveryCode=document.getElementById("authRecoveryCode"),
-authPrimaryBtn=document.getElementById("authPrimaryBtn"),authModeToggle=document.getElementById("authModeToggle"),
-authResetToggle=document.getElementById("authResetToggle"),currentUserDisplay=document.getElementById("currentUser"),
-logoutBtn=document.getElementById("logoutBtn"),changeNickBtn=document.getElementById("changeNickBtn"),
-messagesContainer=document.getElementById("messages"),msgInput=document.getElementById("msgInput"),
-imgInput=document.getElementById("imgInput"),sendBtn=document.getElementById("sendBtn");
+const authOverlay=document.getElementById("authOverlay"),
+bannedOverlay=document.getElementById("bannedOverlay"),
+banReasonText=document.getElementById("banReasonText"),
+banTimeLeft=document.getElementById("banTimeLeft"),
+bannedLogoutBtn=document.getElementById("bannedLogoutBtn"),
+authPrimaryBtn=document.getElementById("authPrimaryBtn"),
+currentUserDisplay=document.getElementById("currentUser"),
+logoutBtn=document.getElementById("logoutBtn"),
+changeNickBtn=document.getElementById("changeNickBtn"),
+messagesContainer=document.getElementById("messages"),
+msgInput=document.getElementById("msgInput"),
+imgInput=document.getElementById("imgInput"),
+sendBtn=document.getElementById("sendBtn");
 
-let currentMode="login",activeUser=localStorage.getItem("anarchy_username")||null,
-currentUserData={accessLevel:1,tag:"MEMBER",nickname:"Anon",muted:false,banned:false},banTimerInterval=null;
+let activeUid=null,
+currentUserData={accessLevel:1,tag:"MEMBER",nickname:"Anon",muted:false,banned:false},
+banTimerInterval=null;
 
-/* ================= INIT ================= */
-async function initDatabaseFiles(){
-for(const file of["TTLS.txt","ACL.txt","LOGS.txt"]){
-const fileRef=ref(db,`system_files/${file.replace(".","_")}`),snap=await get(fileRef);
-if(!snap.exists())await set(fileRef,`[INITIALIZED ${file} AT ${new Date().toISOString()}]\n`);
-}}
-initDatabaseFiles();
+/* ================= AUTH SYSTEM ================= */
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    activeUid = user.uid;
+    authOverlay.style.display = "none";
+    
+    const userRef = ref(db, `users/${user.uid}`);
+    const snap = await get(userRef);
+    
+    if (!snap.exists()) {
+      const defaultNick = user.displayName || ("User_" + user.uid.substring(0, 5));
+      await set(userRef, {
+        username: defaultNick,
+        nickname: defaultNick,
+        tag: "MEMBER",
+        accessLevel: 1,
+        muted: false,
+        banned: false
+      });
+    }
+    listenToUserStatus(user.uid);
+  } else {
+    activeUid = null;
+    authOverlay.style.display = "flex";
+    currentUserDisplay.textContent = "Not Authorized";
+  }
+});
+
+authPrimaryBtn.addEventListener("click", async () => {
+  try {
+    await signInWithPopup(auth, provider);
+  } catch (err) {
+    alert("Authentication Error: " + err.message);
+  }
+});
+
+logoutBtn.addEventListener("click", () => signOut(auth));
+bannedLogoutBtn.addEventListener("click", () => signOut(auth));
+
+function listenToUserStatus(uid) {
+  onValue(ref(db, `users/${uid}`), snapshot => {
+    if (!snapshot.exists()) return;
+    currentUserData = snapshot.val();
+    currentUserData.accessLevel = parseInt(currentUserData.accessLevel || 1);
+    currentUserDisplay.textContent = `${currentUserData.nickname} [Lvl:${currentUserData.accessLevel}]`;
+    checkBanStatus();
+  });
+}
 
 function formatTimeLeft(ms){
 const totalSeconds=Math.floor(ms/1000),d=Math.floor(totalSeconds/86400),
@@ -227,7 +251,7 @@ function checkBanStatus(){
 if(banTimerInterval)clearInterval(banTimerInterval);
 if(currentUserData.banned){
 if(currentUserData.banExpires!==-1&&Date.now()>currentUserData.banExpires){
-update(ref(db,`users/${activeUser}`),{banned:false});bannedOverlay.style.display="none";return;
+update(ref(db,`users/${activeUid}`),{banned:false});bannedOverlay.style.display="none";return;
 }
 banReasonText.textContent=`Reason: ${currentUserData.banReason||"SysAdmin Override"}`;
 bannedOverlay.style.display="flex";
@@ -246,93 +270,23 @@ else banTimeLeft.textContent="T-Minus: "+formatTimeLeft(remaining);
 function isMuted(){
 if(!currentUserData.muted)return false;
 if(currentUserData.muteExpires!==-1&&Date.now()>currentUserData.muteExpires){
-update(ref(db,`users/${activeUser}`),{muted:false});currentUserData.muted=false;return false;
+update(ref(db,`users/${activeUid}`),{muted:false});currentUserData.muted=false;return false;
 }
 return true;
 }
 
-function listenToUserStatus(username){
-onValue(ref(db,`users/${username}`),snapshot=>{
-if(!snapshot.exists())return;
-currentUserData=snapshot.val();
-currentUserData.accessLevel=parseInt(currentUserData.accessLevel||1);
-currentUserDisplay.textContent=`${currentUserData.nickname} (@${username}) [Lvl:${currentUserData.accessLevel}]`;
-checkBanStatus();
+changeNickBtn.addEventListener("click",async()=>{
+if(!auth.currentUser) return alert("ERR: Authorization required.");
+const newNick=prompt("Enter new Alias:",currentUserData.nickname);
+if(newNick&&newNick.trim()!=="")await update(ref(db,`users/${activeUid}`),{nickname:newNick.trim()});
 });
-}
-
-if(activeUser){authOverlay.style.display="none";listenToUserStatus(activeUser)}
 
 setTimeout(()=>{const warning=document.getElementById("warning");if(warning)warning.remove()},3500);
 
-/* ================= AUTH ================= */
-authModeToggle.addEventListener("click",()=>{
-if(currentMode==="login"){
-currentMode="register";authTitle.textContent="N E W   I D E N T I T Y";authPrimaryBtn.textContent="Register";
-authModeToggle.textContent="Return to Auth";authNickname.style.display="block";authRecoveryCode.style.display="none";
-}else{
-currentMode="login";authTitle.textContent="A U T H E N T I C A T E";authPrimaryBtn.textContent="Initialize";
-authModeToggle.textContent="New Identity? Register";authNickname.style.display="none";authRecoveryCode.style.display="none";
-}});
-
-authResetToggle.addEventListener("click",()=>{
-currentMode="reset";authTitle.textContent="P I N   O V E R R I D E";authPrimaryBtn.textContent="Update Key";
-authRecoveryCode.style.display="block";authNickname.style.display="none";
-});
-
-authPrimaryBtn.addEventListener("click",async()=>{
-const username=authUsername.value.trim().toLowerCase(),nickname=authNickname.value.trim()||username,
-pin=authPin.value.trim(),recCode=authRecoveryCode.value.trim();
-if(!username||!pin)return alert("ERR: Missing parameters.");
-const userRef=ref(db,`users/${username}`);
-
-if(currentMode==="register"){
-const userSnap=await get(userRef);if(userSnap.exists())return alert("ERR: ID exists.");
-const recoveryCode=Math.floor(100000+Math.random()*900000).toString();
-await set(userRef,{username,nickname,pin,recoveryCode,tag:"MEMBER",accessLevel:1,muted:false,banned:false});
-alert(`REGISTRATION COMPLETE\n\nSave Override Code:\n${recoveryCode}`);loginUser(username);
-}else if(currentMode==="login"){
-const snapshot=await get(userRef);if(!snapshot.exists())return alert("ERR: Unknown ID.");
-if(snapshot.val().pin!==pin)return alert("ERR: Invalid PIN.");loginUser(username);
-}else if(currentMode==="reset"){
-const snapshot=await get(userRef);if(!snapshot.exists())return alert("ERR: Unknown ID.");
-if(snapshot.val().recoveryCode!==recCode)return alert("ERR: Invalid Override Code.");
-await update(userRef,{pin});alert("PIN UPDATED. INITIALIZING...");loginUser(username);
-}});
-
-function loginUser(username){
-activeUser=username;localStorage.setItem("anarchy_username",username);
-listenToUserStatus(username);authOverlay.style.display="none";
-}
-
-changeNickBtn.addEventListener("click",async()=>{
-const newNick=prompt("Enter new Alias:",currentUserData.nickname);
-if(newNick&&newNick.trim()!=="")await update(ref(db,`users/${activeUser}`),{nickname:newNick.trim()});
-});
-
-logoutBtn.addEventListener("click",performLogout);
-bannedLogoutBtn.addEventListener("click",performLogout);
-function performLogout(){localStorage.removeItem("anarchy_username");location.reload()}
-
-/* ================= LOGGING ================= */
-async function appendToTxtLog(filename,logMessage){
-const fileKey=filename.replace(".","_"),fileRef=ref(db,`system_files/${fileKey}`),snap=await get(fileRef);
-const currentContent=snap.exists()?snap.val():"";
-await set(fileRef,currentContent+`[${new Date().toLocaleString()}] ${logMessage}\n`);
-}
-
 /* ================= SPOILERS ================= */
-function confirmSpoiler(){
-return confirm("Spoiler this content?\n\nSpoilered content will be heavily blurred until the viewer confirms that they want to reveal it.");
-}
-
-function revealWarning(){
-return confirm("Are you sure to unspoiler this?\n\nWe are not responsible for what you see.");
-}
-
-function escapeAttr(str){
-return str.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
-}
+function confirmSpoiler(){return confirm("Spoiler this content?");}
+function revealWarning(){return confirm("Are you sure to unspoiler this?");}
+function escapeAttr(str){return str.replace(/\\/g,"\\\\").replace(/'/g,"\\'");}
 
 function renderSpoilerText(text){
 let result="",last=0,re=/\|\|([\s\S]*?)\|\|/g,m;
@@ -360,6 +314,8 @@ if(revealWarning())el.classList.add("revealed");
 
 /* ================= IMAGE UPLOAD ================= */
 imgInput.addEventListener("change",async e=>{
+if(!auth.currentUser||!activeUid)return alert("ERR: Access denied. Login required.");
+
 if(isMuted()){
 const left=currentUserData.muteExpires===-1?"PERMANENT":formatTimeLeft(currentUserData.muteExpires-Date.now());
 alert(`TX BLOCKED (Muted) | Clear in: ${left}`);imgInput.value="";return;
@@ -378,8 +334,9 @@ if(!spoiler&&!confirm("Send image without spoiler?")){imgInput.value="";return}
 const reader=new FileReader();
 reader.onload=async()=>{
 await push(messagesRef,{
-username:activeUser,
-nickname:currentUserData.nickname||activeUser,
+uid:activeUid,
+username:currentUserData.nickname||"Anon",
+nickname:currentUserData.nickname||"Anon",
 userTag:currentUserData.tag||"MEMBER",
 accessLevel:currentUserData.accessLevel||1,
 message:"",
@@ -395,7 +352,7 @@ imgInput.value="";
 
 /* ================= MESSAGES ================= */
 async function sendMessage(){
-if(!activeUser)return alert("ERR: Not authenticated.");
+if(!auth.currentUser||!activeUid)return alert("ERR: Access denied. Login required.");
 
 if(isMuted()){
 const left=currentUserData.muteExpires===-1?"PERMANENT":formatTimeLeft(currentUserData.muteExpires-Date.now());
@@ -406,8 +363,9 @@ const text=msgInput.value.trim();
 if(text==="")return;
 
 await push(messagesRef,{
-username:activeUser,
-nickname:currentUserData.nickname||activeUser,
+uid:activeUid,
+username:currentUserData.nickname||"Anon",
+nickname:currentUserData.nickname||"Anon",
 userTag:currentUserData.tag||"MEMBER",
 accessLevel:currentUserData.accessLevel||1,
 message:text,
@@ -457,9 +415,9 @@ modButtonsHtml+=`<button class="btn-mod" onclick="editMsg('${msgId}')">EDIT</but
 modButtonsHtml+=`<button class="btn-mod btn-danger" onclick="deleteMsg('${msgId}')">DEL</button>`;
 }
 
-if(myLevel>=8){
-modButtonsHtml+=`<button class="btn-mod btn-danger" onclick="punishUser('${escapeAttr(msgData.username)}','MUTE')">MUTE</button>`;
-modButtonsHtml+=`<button class="btn-mod btn-danger" onclick="punishUser('${escapeAttr(msgData.username)}','BANIP')">BAN</button>`;
+if(myLevel>=8&&msgData.uid){
+modButtonsHtml+=`<button class="btn-mod btn-danger" onclick="punishUser('${escapeAttr(msgData.uid)}','MUTE')">MUTE</button>`;
+modButtonsHtml+=`<button class="btn-mod btn-danger" onclick="punishUser('${escapeAttr(msgData.uid)}','BANIP')">BAN</button>`;
 }
 
 let imageHtml="";
@@ -477,7 +435,7 @@ imageHtml=`<img src="${msgData.image}" class="chat-image" alt="Image">`;
 
 msgElement.innerHTML=`
 <div class="name">
-<span>${escapeHTML(msgData.nickname)} <small style="color:#555">(@${escapeHTML(msgData.username)})</small></span>
+<span>${escapeHTML(msgData.nickname)}</span>
 <span class="user-tag ${tagClass}">[${escapeHTML(tagText)}]</span>
 </div>
 ${msgData.message?`<div class="msg-body">${renderSpoilerText(msgData.message)}</div>`:""}
@@ -493,17 +451,15 @@ window.editMsg=async msgId=>{
 const newText=prompt("OVERWRITE TX:");
 if(newText&&newText.trim()!==""){
 await update(ref(db,`global_messages/${msgId}`),{message:newText.trim()});
-await appendToTxtLog("LOGS.txt",`[EDIT] User @${activeUser} edited message ID ${msgId} to: "${newText.trim()}"`);
 }};
 
 window.deleteMsg=async msgId=>{
 if(confirm("PURGE TX?")){
 await remove(ref(db,`global_messages/${msgId}`));
-await appendToTxtLog("LOGS.txt",`[DELETE] User @${activeUser} deleted message ID ${msgId}`);
 }};
 
-window.punishUser=async(targetUser,actionType)=>{
-const durationInput=prompt(`Set ${actionType} duration in HOURS (0 = Perm, 0.5 = 30m):`,"24");
+window.punishUser=async(targetUid,actionType)=>{
+const durationInput=prompt(`Set ${actionType} duration in HOURS (0 = Perm):`,"24");
 if(durationInput===null)return;
 
 const hours=parseFloat(durationInput);
@@ -512,17 +468,15 @@ if(isNaN(hours)||hours<0)return alert("ERR: Invalid duration.");
 const reason=prompt(`Reason for ${actionType}:`,"TOS Violation");
 if(reason===null)return;
 
-const targetRef=ref(db,`users/${targetUser}`);
+const targetRef=ref(db,`users/${targetUid}`);
 const expiresAt=hours===0?-1:Date.now()+hours*3600*1000;
 
 if(actionType==="MUTE")await update(targetRef,{muted:true,muteReason:reason,muteExpires:expiresAt});
 else if(actionType==="BANIP")await update(targetRef,{banned:true,banReason:reason,banExpires:expiresAt});
 
-await appendToTxtLog("LOGS.txt",`[${actionType}] Target: @${targetUser} | Hrs: ${hours===0?"Perm":hours} | Reason: "${reason}" | Exec: @${activeUser}`);
-alert(`EXECUTION COMPLETE: ${actionType} applied to @${targetUser}`);
+alert(`EXECUTION COMPLETE: ${actionType} applied.`);
 };
 
-/* ================= ESCAPE ================= */
 function escapeHTML(str){
 return str?str.replace(/[&<>'"]/g,tag=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[tag]||tag)):"";
 }
