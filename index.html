@@ -3,12 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>4ChatSDR</title>
+<title>Anarchy Relay</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
-html,body{width:100%;min-height:100%;background:#050505;color:#d4d4d4;font-size:.85rem}
-.app{width:100vw;min-height:100dvh;height:100dvh;display:flex;background:#050505}
+html,body{width:100%;height:100dvh;min-height:100dvh;background:#050505;color:#d4d4d4;font-size:.85rem;overflow:hidden;display:flex;flex-direction:column}
+
+/* Основное приложение занимает всё свободное место за вычетом полоски */
+.app{width:100vw;flex:1;min-height:0;display:flex;background:#050505;overflow:hidden}
+
 .sdr-panel{width:var(--sdr-width);height:100%;background:#000;overflow:hidden;border-right:1px solid #1f1f1f;flex-shrink:0}
 .sdr-frame{width:100%;height:100%;border:0;display:block;background:#000}
 .chat-panel{width:var(--chat-width);min-width:280px;height:100%;background:#080808;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
@@ -43,7 +46,7 @@ button:hover{background:#7f1d1d}.btn-small{padding:4px 6px;font-size:.55rem}
 
 .auth-overlay,.banned-overlay,.maintenance-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);display:flex;justify-content:center;align-items:center;z-index:2000}
 .banned-overlay{z-index:3000}
-.maintenance-overlay{z-index:4000} /* Навысший приоритет */
+.maintenance-overlay{z-index:4000}
 .auth-box,.banned-box,.maintenance-box{background:#0a0a0a;padding:25px;border-radius:2px;border:1px solid #1f1f1f;width:90%;max-width:350px;text-align:center}
 .banned-box{border-color:#991b1b}.banned-box h2{color:#dc2626;margin-bottom:10px;font-size:1.1rem;letter-spacing:1px}.banned-box p{color:#888;font-size:.8rem;margin-bottom:5px}
 .maintenance-box{border-color:#d97706}.maintenance-box h2{color:#f59e0b;margin-bottom:12px;font-size:1.1rem;letter-spacing:1px}.maintenance-box p{color:#aaa;font-size:.8rem;line-height:1.4;word-break:break-word}
@@ -56,8 +59,8 @@ button:hover{background:#7f1d1d}.btn-small{padding:4px 6px;font-size:.55rem}
 .warning-popup{position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#991b1b;color:#fff;padding:8px 16px;border-radius:2px;font-weight:bold;box-shadow:0 2px 10px rgba(153,27,27,.4);z-index:1000;font-size:.8rem;animation:fadeOut .5s ease var(--warning-time) forwards}
 @keyframes fadeOut{to{opacity:0;visibility:hidden}}
 
-/* Желтая полоса статуса сервера */
-.server-warning-bar{position:fixed;bottom:0;left:0;right:0;background:#b45309;color:#fff;padding:6px 10px;font-weight:bold;font-size:.72rem;text-align:center;z-index:1500;border-top:1px solid #f59e0b;letter-spacing:.5px;display:none}
+/* Жёлтая полоска 30px снизу */
+.server-warning-bar{height:30px;min-height:30px;background:#eab308;color:#000;padding:0 12px;font-weight:bold;font-size:.73rem;display:none;align-items:center;justify-content:center;border-top:1px solid #fef08a;letter-spacing:.5px;z-index:1500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
 
 .messages::-webkit-scrollbar{width:5px}.messages::-webkit-scrollbar-track{background:#050505}.messages::-webkit-scrollbar-thumb{background:#222}.messages::-webkit-scrollbar-thumb:hover{background:#333}
 
@@ -73,8 +76,8 @@ button:hover{background:#7f1d1d}.btn-small{padding:4px 6px;font-size:.55rem}
 .spoiler-image-wrap.revealed::after{content:"CLICK TO RE-BLUR";background:rgba(0,0,0,.55);font-size:.65rem}
 
 @media(max-width:900px){
-html,body{width:100%;height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
-.app{width:100%;height:auto;min-height:100dvh;display:flex;flex-direction:column;overflow:visible}
+html,body{height:auto;min-height:100dvh;overflow-x:hidden;overflow-y:auto}
+.app{width:100%;height:auto;min-height:calc(100dvh - 30px);display:flex;flex-direction:column;overflow:visible}
 .sdr-panel{width:100%;height:var(--mobile-sdr-height);min-height:0;border-right:0;border-bottom:1px solid #1f1f1f;flex-shrink:0}
 .sdr-frame{width:100%;height:100%}
 .chat-panel{width:100%;height:var(--mobile-chat-height);min-width:0;min-height:320px;flex-shrink:0}
@@ -93,7 +96,7 @@ html,body{width:100%;height:auto;min-height:100%;overflow-x:hidden;overflow-y:au
 <aside class="chat-panel">
 
 <div class="chat-header">
-<div class="header-title">[ 4AnarchyChat // RELAY_01 // <span id="versionText"></span> ]</div>
+<div class="header-title">[ ANARCHY_NET // RELAY_01 // <span id="versionText"></span> ]</div>
 <div class="header-user-row">
 <span id="currentUser">Not Authorized</span>
 <button id="changeNickBtn" class="btn-small" style="background:#1f2937">Alias</button>
@@ -114,13 +117,13 @@ html,body{width:100%;height:auto;min-height:100%;overflow-x:hidden;overflow-y:au
 </aside>
 </div>
 
+<!-- Жёлтая полоска 30px под сайтом -->
+<div class="server-warning-bar" id="serverWarningBar"></div>
+
 <!-- Warning Popup -->
 <div class="warning-popup" id="warning">[!] UNMODERATED ZONE: PROCEED WITH CAUTION</div>
 
-<!-- Yellow Server Warning Bar -->
-<div class="server-warning-bar" id="serverWarningBar"></div>
-
-<!-- Maintenance / Server Shutdown Overlay -->
+<!-- Maintenance Overlay -->
 <div class="maintenance-overlay" id="maintenanceOverlay" style="display:none">
 <div class="maintenance-box">
 <h2>SYSTEM OFFLINE</h2>
@@ -221,15 +224,15 @@ msgRemovedUnsub=null;
 onValue(ref(db, "server_status"), snapshot => {
   const status = snapshot.val() || {};
 
-  // 1. Плохое состояние сервера (Желтая полоска)
+  // 1. Плохое состояние сервера (Жёлтая полоска 30px поджимает сайт вверх)
   if (status.bad_state === true) {
-    serverWarningBar.textContent = status.bad_state_message || "⚠️ WARNING: SERVER IS EXPERIENCING HIGH LATENCY OR UNSTABILITY.";
-    serverWarningBar.style.display = "block";
+    serverWarningBar.textContent = status.bad_state_message || "⚠️ WARNING: Server is experiencing high latency or instability.";
+    serverWarningBar.style.display = "flex";
   } else {
     serverWarningBar.style.display = "none";
   }
 
-  // 2. Полный lockout (Обслуживание / Отключение)
+  // 2. Блокировка входа (Maintenance)
   if (status.maintenance === true) {
     maintenanceReasonText.textContent = status.maintenance_reason || "Connection rejected: Server is undergoing maintenance.";
     maintenanceOverlay.style.display = "flex";
