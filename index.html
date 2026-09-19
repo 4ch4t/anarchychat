@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Anarchy Relay</title>
+<title>4ChatSDR</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
@@ -41,10 +41,12 @@ button{padding:7px 9px;border:0;border-radius:2px;background:#991b1b;color:#fff;
 button:hover{background:#7f1d1d}.btn-small{padding:4px 6px;font-size:.55rem}
 #sendBtn{padding:7px 8px}.send-btn-icon{width:14px;height:14px;object-fit:contain;display:block}
 
-.auth-overlay,.banned-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);display:flex;justify-content:center;align-items:center;z-index:2000}
+.auth-overlay,.banned-overlay,.maintenance-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);display:flex;justify-content:center;align-items:center;z-index:2000}
 .banned-overlay{z-index:3000}
-.auth-box,.banned-box{background:#0a0a0a;padding:25px;border-radius:2px;border:1px solid #1f1f1f;width:90%;max-width:350px;text-align:center}
+.maintenance-overlay{z-index:4000} /* Навысший приоритет */
+.auth-box,.banned-box,.maintenance-box{background:#0a0a0a;padding:25px;border-radius:2px;border:1px solid #1f1f1f;width:90%;max-width:350px;text-align:center}
 .banned-box{border-color:#991b1b}.banned-box h2{color:#dc2626;margin-bottom:10px;font-size:1.1rem;letter-spacing:1px}.banned-box p{color:#888;font-size:.8rem;margin-bottom:5px}
+.maintenance-box{border-color:#d97706}.maintenance-box h2{color:#f59e0b;margin-bottom:12px;font-size:1.1rem;letter-spacing:1px}.maintenance-box p{color:#aaa;font-size:.8rem;line-height:1.4;word-break:break-word}
 .time-left-text{color:#ef4444;font-weight:bold;font-size:.9rem;margin-bottom:15px}
 .auth-box h2{margin-bottom:20px;color:#dc2626;letter-spacing:1px;font-size:1.1rem}
 
@@ -53,6 +55,9 @@ button:hover{background:#7f1d1d}.btn-small{padding:4px 6px;font-size:.55rem}
 
 .warning-popup{position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#991b1b;color:#fff;padding:8px 16px;border-radius:2px;font-weight:bold;box-shadow:0 2px 10px rgba(153,27,27,.4);z-index:1000;font-size:.8rem;animation:fadeOut .5s ease var(--warning-time) forwards}
 @keyframes fadeOut{to{opacity:0;visibility:hidden}}
+
+/* Желтая полоса статуса сервера */
+.server-warning-bar{position:fixed;bottom:0;left:0;right:0;background:#b45309;color:#fff;padding:6px 10px;font-weight:bold;font-size:.72rem;text-align:center;z-index:1500;border-top:1px solid #f59e0b;letter-spacing:.5px;display:none}
 
 .messages::-webkit-scrollbar{width:5px}.messages::-webkit-scrollbar-track{background:#050505}.messages::-webkit-scrollbar-thumb{background:#222}.messages::-webkit-scrollbar-thumb:hover{background:#333}
 
@@ -88,7 +93,7 @@ html,body{width:100%;height:auto;min-height:100%;overflow-x:hidden;overflow-y:au
 <aside class="chat-panel">
 
 <div class="chat-header">
-<div class="header-title">[ ANARCHY_NET // RELAY_01 // <span id="versionText"></span> ]</div>
+<div class="header-title">[ 4AnarchyChat // RELAY_01 // <span id="versionText"></span> ]</div>
 <div class="header-user-row">
 <span id="currentUser">Not Authorized</span>
 <button id="changeNickBtn" class="btn-small" style="background:#1f2937">Alias</button>
@@ -109,8 +114,21 @@ html,body{width:100%;height:auto;min-height:100%;overflow-x:hidden;overflow-y:au
 </aside>
 </div>
 
+<!-- Warning Popup -->
 <div class="warning-popup" id="warning">[!] UNMODERATED ZONE: PROCEED WITH CAUTION</div>
 
+<!-- Yellow Server Warning Bar -->
+<div class="server-warning-bar" id="serverWarningBar"></div>
+
+<!-- Maintenance / Server Shutdown Overlay -->
+<div class="maintenance-overlay" id="maintenanceOverlay" style="display:none">
+<div class="maintenance-box">
+<h2>SYSTEM OFFLINE</h2>
+<p id="maintenanceReasonText">Relay is temporarily unavailable due to system maintenance.</p>
+</div>
+</div>
+
+<!-- Banned Overlay -->
 <div class="banned-overlay" id="bannedOverlay" style="display:none">
 <div class="banned-box">
 <h2>ACCESS RESTRICTED</h2>
@@ -120,6 +138,7 @@ html,body{width:100%;height:auto;min-height:100%;overflow-x:hidden;overflow-y:au
 </div>
 </div>
 
+<!-- Auth Overlay -->
 <div class="auth-overlay" id="authOverlay">
 <div class="auth-box">
 <h2>A U T H E N T I C A T E</h2>
@@ -186,7 +205,10 @@ changeNickBtn=document.getElementById("changeNickBtn"),
 messagesContainer=document.getElementById("messages"),
 msgInput=document.getElementById("msgInput"),
 imgInput=document.getElementById("imgInput"),
-sendBtn=document.getElementById("sendBtn");
+sendBtn=document.getElementById("sendBtn"),
+serverWarningBar=document.getElementById("serverWarningBar"),
+maintenanceOverlay=document.getElementById("maintenanceOverlay"),
+maintenanceReasonText=document.getElementById("maintenanceReasonText");
 
 let activeUid=null,
 currentUserData={accessLevel:1,tag:"MEMBER",nickname:"Anon",muted:false,banned:false},
@@ -194,6 +216,27 @@ banTimerInterval=null,
 msgAddedUnsub=null,
 msgChangedUnsub=null,
 msgRemovedUnsub=null;
+
+/* ================= SERVER STATUS SYSTEM ================= */
+onValue(ref(db, "server_status"), snapshot => {
+  const status = snapshot.val() || {};
+
+  // 1. Плохое состояние сервера (Желтая полоска)
+  if (status.bad_state === true) {
+    serverWarningBar.textContent = status.bad_state_message || "⚠️ WARNING: SERVER IS EXPERIENCING HIGH LATENCY OR UNSTABILITY.";
+    serverWarningBar.style.display = "block";
+  } else {
+    serverWarningBar.style.display = "none";
+  }
+
+  // 2. Полный lockout (Обслуживание / Отключение)
+  if (status.maintenance === true) {
+    maintenanceReasonText.textContent = status.maintenance_reason || "Connection rejected: Server is undergoing maintenance.";
+    maintenanceOverlay.style.display = "flex";
+  } else {
+    maintenanceOverlay.style.display = "none";
+  }
+});
 
 /* ================= AUTH SYSTEM ================= */
 onAuthStateChanged(auth, async user => {
